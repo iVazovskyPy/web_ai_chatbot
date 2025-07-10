@@ -1,0 +1,85 @@
+/* myapp/static/myapp/style.css */
+.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.chat-box {
+    height: 500px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+.message-form {
+    display: flex;
+    gap: 10px;
+}
+
+.message-form textarea {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;  /* Запрещаем ручное изменение размера */
+    min-height: 60px;  /* Фиксированная минимальная высота */
+    font-family: Arial, sans-serif;  /* Чтобы шрифт совпадал с остальным интерфейсом */
+}
+
+.message-form button {
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.message-form button:hover {
+    background: #45a049;
+}
+
+.user-message, .bot-message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 18px;
+    max-width: 70%;
+}
+
+.user-message {
+    background: #e3f2fd;
+    margin-left: auto;
+    text-align: right;
+}
+
+.bot-message {
+    background: #f1f1f1;
+    margin-right: auto;
+}
+
+#chat-box {
+    min-height: 500px;
+}
+
+.loading-message {
+    color: #666;
+    font-style: italic;
+}
+
+/* Анимация загрузки */
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.typing-indicator::after {
+    content: '...';
+    animation: blink 1.5s infinite;
+}

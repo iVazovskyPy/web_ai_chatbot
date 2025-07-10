@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <title>AI Chat</title>
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>AI Assistant (Mistral)</h1>
+        
+        <div class="chat-box" id="chat-box">
+            <!-- Сообщения будут здесь -->
+        </div>
+        
+        <form id="chat-form" class="message-form">
+            {% csrf_token %}
+            <textarea 
+                id="user-input" 
+                placeholder="Type your message..." 
+                rows="3"
+                required
+            ></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- Подключаем jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Наш скрипт -->
+    <script>
+    $(document).ready(function() {
+        const chatBox = $('#chat-box');
+        
+        // Отправка сообщения
+        $('#chat-form').on('submit', function(e) {
+            e.preventDefault();
+            const userInput = $('#user-input').val().trim();
+            
+            if (!userInput) return;
+            
+            // Добавляем сообщение пользователя
+            chatBox.append(`
+                <div class="user-message">
+                    ${userInput}
+                </div>
+            `);
+            $('#user-input').val('');
+            
+            // Показываем индикатор загрузки
+            chatBox.append(`
+                <div class="bot-message loading">
+                    <span class="typing-indicator">...</span>
+                </div>
+            `);
+            chatBox.scrollTop(chatBox[0].scrollHeight);
+            
+            // Отправка запроса к Mistral API
+            $.ajax({
+                url: '/api/mistral/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    message: userInput
+                }),
+                success: function(response) {
+                    $('.loading').remove();
+                    chatBox.append(`
+                        <div class="bot-message">
+                            ${response.reply}
+                        </div>
+                    `);
+                },
+                error: function(xhr) {
+                    $('.loading').remove();
+                    chatBox.append(`
+                        <div class="bot-message error">
+                            Error: ${xhr.statusText}
+                        </div>
+                    `);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

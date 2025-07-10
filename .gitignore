@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+web_ai_chat_bot_venv
+
+# Jupyter Notebook checkpoint files
+.ipynb_checkpoints
+
+# PyCharm / VS Code project files
+.idea/
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Environment variables file (если есть)
+.env
+.env.*
+
+# Django specific
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+*.sqlite3
+celerybeat-schedule
+*.mo
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Test output
+.junit/
+test-results/
+
+# Migrations (опционально, только если ты не хочешь их пушить)
+# **Обычно миграции коммитят, поэтому закомментировано**
+# */migrations/
+# !*/migrations/__init__.py
+
+# LLM models
+chat_bot_app/mistral-7b-instruct-v0.2.Q4_K_M.gguf
