@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('chat_bot_app.urls')),  # Include the chatbot app's URLs
+    path('user/', include('users_app.urls')),  # Include the users app's URLs
 ]
 
 if settings.DEBUG:
