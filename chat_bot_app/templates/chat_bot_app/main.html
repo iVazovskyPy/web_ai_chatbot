@@ -6,8 +6,16 @@
     <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
 </head>
 <body>
+    <div style="text-align:right; margin-bottom:10px;">
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}">Выйти</a>
+        {% else %}
+            <a href="{% url 'register' %}">Регистрация</a> |
+            <a href="{% url 'login' %}">Вход</a>
+        {% endif %}
+    </div>
     <div class="chat-container">
-        <h1>AI Assistant (Mistral)</h1>
+        <h1>SynthIA</h1>
         
         <div class="chat-box" id="chat-box">
             <!-- Сообщения будут здесь -->
@@ -17,7 +25,7 @@
             {% csrf_token %}
             <textarea 
                 id="user-input" 
-                placeholder="Type your message..." 
+                placeholder="Ask anything" 
                 rows="3"
                 required
             ></textarea>
@@ -58,7 +66,7 @@
             
             // Отправка запроса к Mistral API
             $.ajax({
-                url: '/api/mistral/',
+                url: '/chat/', 
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -84,5 +92,13 @@
         });
     });
     </script>
+
+    <div style="text-align:center; margin-top:30px; color: #888;">
+        {% if user.is_authenticated %}
+            Logged in as: <strong>{{ user.username }}</strong>
+        {% else %}
+            Logged in as: <strong>anonymous</strong>
+        {% endif %}
+    </div>
 </body>
 </html>

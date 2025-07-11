@@ -1,11 +1,17 @@
+import os
+import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from llama_cpp import Llama
 from django.conf import settings
-from django.conf import settings
 from pathlib import Path
-import os
+from .forms import CustomUserCreationForm
+from django.contrib.auth import login
+from django.shortcuts import redirect
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout
 
 
 # Путь к модели (файл лежит прямо в директории приложения)
@@ -36,20 +42,59 @@ def mistral_api(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            prompt = f"<|user|>\n{data.get('message', '').strip()}\n<|assistant|>\n"
-            
+            # System prompt
+            system_message = "<|system|>\nYou are Synthia, a polite AI assistant.\n"
+            user_message = f"<|user|>\n{data.get('message', '').strip()}\n<|assistant|>\n"
+            prompt = system_message + user_message
+
             response = MODEL.create_completion(
                 prompt,
                 max_tokens=200,
                 stop=["<|user|>", "<|system|>"],
                 temperature=0.7
             )
-            
+
             return JsonResponse({
                 'reply': response['choices'][0]['text'].strip(),
                 'status': 'success'
             })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-    
+
     return JsonResponse({'error': 'Only POST allowed'}, status=400)
+
+def register_view(request):
+    """Регистрация нового пользователя"""
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.email = form.cleaned_data['email']
+            user.save()
+            # Save birth_date somewhere if you have a custom user model or profile
+            login(request, user)
+            return redirect('chat')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'chat_bot_app/register.html', {'form': form})
+
+def login_view(request):
+    """Вход пользователя"""
+    if request.user.is_authenticated:
+        return redirect('chat')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            return redirect('chat')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'chat_bot_app/login.html', {'form': form})
+
+def logout_view(request):
+    """Выход пользователя"""
+    logout(request)
+    return redirect('login')
