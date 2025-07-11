@@ -95,7 +95,14 @@
 
     <div style="text-align:center; margin-top:30px; color: #888;">
         {% if user.is_authenticated %}
-            Logged in as: <strong>{{ user.username }}</strong>
+            <a href="{% url 'profile' %}" style="text-decoration:none; color:inherit;">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="width:40px; height:40px; border-radius:50%; vertical-align:middle; margin-right:8px;">
+                {% else %}
+                    <img src="{% static 'myapp/default_avatar.png' %}" alt="Avatar" style="width:40px; height:40px; border-radius:50%; vertical-align:middle; margin-right:8px;">
+                {% endif %}
+                <strong>{{ user.username }}</strong>
+            </a>
         {% else %}
             Logged in as: <strong>anonymous</strong>
         {% endif %}

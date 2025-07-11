@@ -6,12 +6,14 @@ from django.views.decorators.csrf import csrf_exempt
 from llama_cpp import Llama
 from django.conf import settings
 from pathlib import Path
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileForm
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout
+from .models import Profile
+from django.contrib.auth.decorators import login_required
 
 
 # Путь к модели (файл лежит прямо в директории приложения)
@@ -98,3 +100,16 @@ def logout_view(request):
     """Выход пользователя"""
     logout(request)
     return redirect('login')
+
+@login_required
+def profile_view(request):
+    """Просмотр и редактирование профиля пользователя"""
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile, user=request.user)
+    return render(request, 'chat_bot_app/profile.html', {'form': form, 'profile': profile})
